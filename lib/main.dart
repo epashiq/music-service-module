@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_service_module/features/view/screens/music_screen.dart';
+import 'package:music_service_module/features/create_music_service/view/screens/music_screen.dart';
 import 'package:music_service_module/general/di/injection.dart';
 
 void main() async {
