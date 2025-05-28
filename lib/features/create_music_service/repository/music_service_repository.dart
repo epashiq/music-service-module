@@ -6,4 +6,8 @@ abstract class MusicServiceRepository {
   Future<Either<MainFailure, MusicServiceModel>> addMusicService({required MusicServiceModel musicServiceModel}) async {
     throw UnimplementedError('addMusicService() not added');
   }
+
+  Future<Either<MainFailure, List<MusicServiceModel>>> getMusicService() async {
+    throw UnimplementedError('addMusicService() not added');
+  }
 }

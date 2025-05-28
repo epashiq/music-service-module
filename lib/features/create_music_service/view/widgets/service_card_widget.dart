@@ -1,88 +1,18 @@
-// import 'package:flutter/material.dart';
-
-// class ServiceCardWidget extends StatelessWidget {
-//   final IconData icon;
-//   final Color iconColor;
-//   final String title;
-//   final String subtitle;
-
-//   const ServiceCardWidget({super.key, 
-//     required this.icon,
-//     required this.iconColor,
-//     required this.title,
-//     required this.subtitle,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       margin: const EdgeInsets.only(bottom: 16),
-//       padding: const EdgeInsets.all(16),
-//       decoration: BoxDecoration(
-//         color: const Color(0xFF2A2A2A),
-//         borderRadius: BorderRadius.circular(12),
-//       ),
-//       child: Row(
-//         children: [
-//           Container(
-//             width: 40,
-//             height: 40,
-//             decoration: BoxDecoration(
-//               color: iconColor.withOpacity(0.2),
-//               borderRadius: BorderRadius.circular(8),
-//             ),
-//             child: Icon(icon, color: iconColor, size: 24),
-//           ),
-//           const SizedBox(width: 16),
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text(
-//                   title,
-//                   style: const TextStyle(
-//                     color: Colors.white,
-//                     fontSize: 16,
-//                     fontWeight: FontWeight.w600,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 4),
-//                 Text(
-//                   subtitle,
-//                   style: TextStyle(
-//                     color: Colors.white.withOpacity(0.6),
-//                     fontSize: 14,
-//                     fontWeight: FontWeight.w400,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//           Icon(Icons.chevron_right,
-//               color: Colors.white.withOpacity(0.4), size: 24),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ServiceCardWidget extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
+  final String icon;
   final String title;
-  final String subtitle;
+  final String descreption;
   final String imagePath;
 
   const ServiceCardWidget({
     super.key,
     required this.icon,
-    required this.iconColor,
     required this.title,
-    required this.subtitle,
-    required this.imagePath, // New background image path
+    required this.descreption,
+    required this.imagePath,
   });
 
   @override
@@ -90,23 +20,23 @@ class ServiceCardWidget extends StatelessWidget {
     return Container(
       height: 100,
       margin: const EdgeInsets.only(bottom: 16),
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        image: DecorationImage(
-          image: AssetImage(imagePath),
-          fit: BoxFit.cover,
-        ),
       ),
       child: Stack(
+        fit: StackFit.expand,
         children: [
-          // Dark overlay
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Colors.black.withOpacity(0.6),
+          Opacity(
+            opacity: 0.2,
+            child: Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
             ),
           ),
-          // Content
+          Container(
+            color: Colors.black.withOpacity(0.4),
+          ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -115,10 +45,9 @@ class ServiceCardWidget extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(icon, color: iconColor, size: 24),
+                  child: Image.asset(icon),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -128,17 +57,17 @@ class ServiceCardWidget extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
+                        style: GoogleFonts.syne(
+                          color: const Color(0XFFFFFFFF),
+                          fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
+                        descreption,
+                        style: GoogleFonts.syne(
+                          color: const Color(0XFFFFFFFF),
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
                         ),
@@ -146,7 +75,8 @@ class ServiceCardWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: Colors.white54),
+                // const Icon(Icons.chevron_right, color: Colors.white54),
+                Image.asset('assets/icons/arrow-forward.png')
               ],
             ),
           ),

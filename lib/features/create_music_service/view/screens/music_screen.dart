@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:music_service_module/features/create_music_service/view/screens/music_details_screen.dart';
+import 'package:music_service_module/features/create_music_service/view/widgets/add_music_dialog_widget.dart';
+import 'package:music_service_module/features/create_music_service/view/widgets/bottom_navigation_item_widget.dart';
 import 'package:music_service_module/features/create_music_service/view/widgets/service_card_widget.dart';
-import 'package:music_service_module/features/create_music_service/view_model/bottom_navigation_item_widget.dart';
 import 'package:music_service_module/features/create_music_service/view_model/music_service_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +16,16 @@ class MusicScreen extends StatefulWidget {
 
 class _MusicScreenState extends State<MusicScreen> {
   @override
+  void initState() {
+    super.initState();
+    final musicServiceViewModel =
+        Provider.of<MusicServiceViewModel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      musicServiceViewModel.getMusicService();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final musicServiceViewModel = Provider.of<MusicServiceViewModel>(context);
     return Scaffold(
@@ -22,7 +33,6 @@ class _MusicScreenState extends State<MusicScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top section with gradient background
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -56,10 +66,10 @@ class _MusicScreenState extends State<MusicScreen> {
                                           fontWeight: FontWeight.w500,
                                           fontSize: 14,
                                           color: Color(0XFF61616B)),
-                                      suffixIcon: const Icon(Icons.mic,
-                                          color: Color(0XFFFFFFFF), size: 20),
-                                      prefixIcon: const Icon(Icons.search,
-                                          color: Color(0XFFFFFFFF), size: 20),
+                                      suffixIcon:
+                                          Image.asset('assets/icons/mike.png'),
+                                      prefixIcon: Image.asset(
+                                          'assets/icons/search.png'),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       )),
@@ -171,38 +181,39 @@ class _MusicScreenState extends State<MusicScreen> {
                     ),
                     const SizedBox(height: 24),
                     Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        children: const [
-                          ServiceCardWidget(
-                            icon: Icons.equalizer,
-                            iconColor: Color(0xFFFF6B6B),
-                            title: 'Music Production',
-                            subtitle: 'Custom instrumentals & film scoring',
-                            imagePath: 'assets/icons/music-background.jpg',
-                          ),
-                          ServiceCardWidget(
-                            icon: Icons.tune,
-                            iconColor: Color(0xFF4ECDC4),
-                            title: 'Mixing & Mastering',
-                            subtitle: 'Make your tracks Radio-ready',
-                            imagePath: 'assets/icons/music-background.jpg',
-                          ),
-                          ServiceCardWidget(
-                            icon: Icons.edit,
-                            iconColor: Color(0xFFFFE66D),
-                            title: 'Lyrics Writing',
-                            subtitle: 'Turn feelings into lyrics',
-                            imagePath: 'assets/icons/music-background.jpg',
-                          ),
-                          ServiceCardWidget(
-                            icon: Icons.mic,
-                            iconColor: Color(0xFFB19CD9),
-                            title: 'Vocals',
-                            subtitle: 'Vocals that bring your lyrics to life',
-                            imagePath: 'assets/icons/music-background.jpg',
-                          ),
-                        ],
+                      child: Consumer<MusicServiceViewModel>(
+                        builder: (context, musiPro, child) {
+                          if (musiPro.musicList.isEmpty) {
+                            return const Text('no music data available');
+                          }
+                          return ListView.builder(
+                            itemCount: musiPro.musicList.length,
+                            itemBuilder: (context, index) {
+                              final music = musiPro.musicList[index];
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            MusicDetailsScreen(
+                                                musicServiceModel: music),
+                                      ));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: ServiceCardWidget(
+                                      icon: music.iconName,
+                                      title: music.title,
+                                      descreption: music.description,
+                                      imagePath:
+                                          'assets/icons/music-background.jpg'),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -244,66 +255,18 @@ class _MusicScreenState extends State<MusicScreen> {
           showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(
-                title: const Text('add music'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: musicServiceViewModel.titleController,
-                      decoration: InputDecoration(
-                          hintText: 'title',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          )),
-                    ),
-                    TextField(
-                      controller: musicServiceViewModel.descriptionController,
-                      decoration: InputDecoration(
-                          hintText: 'descreption',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          )),
-                    ),
-                    TextField(
-                      controller: musicServiceViewModel.iconNameController,
-                      decoration: InputDecoration(
-                        hintText: 'image path',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.paste),
-                          onPressed: () async {
-                            final data = await Clipboard.getData('text/plain');
-                            if (data?.text != null) {
-                              musicServiceViewModel.iconNameController.text =
-                                  data!.text!;
-                            }
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Cancel')),
-                  TextButton(
-                      onPressed: () {
-                        musicServiceViewModel.addMusicService();
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Add')),
-                ],
-              );
+              return AddMusicDialogWidget(
+                  titleController: musicServiceViewModel.titleController,
+                  descriptionController:
+                      musicServiceViewModel.descriptionController,
+                  iconNameController: musicServiceViewModel.iconNameController,
+                  onAdd: () {
+                    musicServiceViewModel.addMusicService();
+                  });
             },
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

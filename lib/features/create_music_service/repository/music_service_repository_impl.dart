@@ -5,10 +5,11 @@ import 'package:music_service_module/features/create_music_service/model/music_s
 import 'package:music_service_module/features/create_music_service/repository/music_service_repository.dart';
 import 'package:music_service_module/general/failures/main_failures.dart';
 import 'package:music_service_module/general/utils/firebase_collections.dart';
+
 @LazySingleton(as: MusicServiceRepository)
 class MusicServiceRepositoryImpl implements MusicServiceRepository {
   final FirebaseFirestore firebaseFirestore;
- 
+
   MusicServiceRepositoryImpl({required this.firebaseFirestore});
   @override
   Future<Either<MainFailure, MusicServiceModel>> addMusicService(
@@ -24,6 +25,26 @@ class MusicServiceRepositoryImpl implements MusicServiceRepository {
       await musicServiceRef.doc(id).set(musicService.toMap());
 
       return right(musicService);
+    } catch (e) {
+      return left(MainFailure.serverFailure(errorMessage: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<MainFailure, List<MusicServiceModel>>> getMusicService() async {
+    try {
+      Query query = firebaseFirestore
+          .collection(FirebaseCollections.musicSrvice)
+          .orderBy('createdAt', descending: true);
+
+      QuerySnapshot querySnapshot = await query.get();
+
+      final newList = querySnapshot.docs
+          .map((music) =>
+              MusicServiceModel.fromMap(music.data() as Map<String, dynamic>))
+          .toList();
+
+          return right(newList);
     } catch (e) {
       return left(MainFailure.serverFailure(errorMessage: e.toString()));
     }
