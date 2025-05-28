@@ -32,6 +32,7 @@ class MusicServiceViewModel with ChangeNotifier {
     result.fold((failure) {
       MainFailure.serverFailure(errorMessage: failure.errorMessage);
     }, (success) {
+      addLocally(success);
       log('add music succesfully');
     });
   }
@@ -45,5 +46,10 @@ class MusicServiceViewModel with ChangeNotifier {
       musicList.addAll(success);
     });
     notifyListeners();
+  }
+
+  void addLocally(MusicServiceModel music){
+     musicList.insert(0, music);
+     notifyListeners();
   }
 }

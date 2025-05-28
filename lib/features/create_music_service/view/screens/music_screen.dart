@@ -238,10 +238,10 @@ class _MusicScreenState extends State<MusicScreen> {
                       label: 'Home',
                       isActive: true),
                   BottomNavigationItemWidget(
-                      iconPath: 'assets/icons/news.png', label: 'Genres'),
+                      iconPath: 'assets/icons/news.png', label: 'News'),
                   BottomNavigationItemWidget(
                       iconPath: 'assets/icons/track-box.png',
-                      label: 'Top Songs'),
+                      label: 'Track Box'),
                   BottomNavigationItemWidget(
                       iconPath: 'assets/icons/projects.png', label: 'Projects'),
                 ],
